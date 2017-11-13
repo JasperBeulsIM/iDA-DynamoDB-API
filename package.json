@@ -1,0 +1,16 @@
+{
+  "name": "iDA-DynamoDB-API",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node api-server.js"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.148.0",
+    "express": "^4.16.2",
+    "morgan": "^1.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.1"
+  }
+}
