@@ -103,8 +103,9 @@ app.get("/persons", (req, res) => {
  * API GET a person
  */
 app.get("/persons/:id", (req, res) => {
+    const id = parseInt(req.params.id);
     const params = {
-        Key: {Item:{Id: req.params.id}},
+        Key: {Item:{Id: id}},
         TableName : "Personen",
     };
 
