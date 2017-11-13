@@ -20,83 +20,35 @@ app.use(bodyParser.json());
 // Add logging to the mix, couple morgan middleware
 const logger = morgan("tiny");
 app.use(logger);
-// function putItem(table, item, callback) {
-//     let params = {
-//         TableName: table,
-//         Item: {}
-//     };
-//
-//     for (let key of Object.keys(item)) {
-//         let value;
-//         if (typeof item[key] === "string") {
-//             value = {S: item[key]};
-//         } else if (typeof item[key] === "number") {
-//             value = {N: "" + item[key]};
-//         } else if (typeof item[key] === typeof Array) {
-//             value = {SS: item[key]};
-//         }
-//         params.Item[key] = value;
-//     }
-//     dynamodb.putItem(params,callback);
-// }
-//
-// function getAllItems(table, callback) {
-//     let params = {
-//         TableName: table,
-//     };
-//
-//     dynamodb.scan(params,callback);
-// }
-//
-// function getItem(table, idName, id, callback) {
-//     let params = {
-//         TableName: table,
-//         Key: {}
-//     };
-//
-//     params.Key[idName] = {S: id};
-//
-//     dynamodb.getItem(params,callback);
-//
-// }
-//
-// dynamodb.getItem(params, function (err, data) {
-//     if (err) { // error
-//         console.log(err, err.stack);
-//     }
-//     else { // Sucessful response
-//         console.log(data);
-//     }
-// });
-
 
 /**
- * API GET home
+ * GET home
  */
 app.get("/", (req, res) => res.send("Hello iDA!"));
 
 /**
- * API GET all persons
+ * GET all persons
  */
 app.get("/persons", (req, res) => {
     const params = {TableName: "Personen"};
 
-    console.log("req", params);
-    console.log("Getting all items...");
-    docClient.scan(params, function (err, data) {
-        if (err) {
-            console.error("Unable to get items. Error:", JSON.stringify(err, null, 2));
-        } else {
-            console.log("got items:", JSON.stringify(data, null, 2));
-            res.status(201).json({
-                "status": "ok",
-            });
-        }
-    });
+    console.log("Getting all persons...");
+    docClient.scan(params).promise()
+        .then((data)=>{
+                console.log("got persons:", JSON.stringify(data, null, 2))},
+            res.status(201).json(
+                {
+                    "status": "ok",
+                }
+            )
+        )
+        .catch((err)=>{
+            console.error("Unable to get persons. Error:", JSON.stringify(err, null, 2))
+        });
 });
 
 /**
- * API GET a person
+ * GET a person
  */
 app.get("/persons/:id", (req, res) => {
 
@@ -107,7 +59,7 @@ app.get("/persons/:id", (req, res) => {
 
     docClient.get(params).promise()
         .then((data)=>{
-            console.log("got item:", JSON.stringify(data, null, 2))},
+            console.log("got person:", JSON.stringify(data, null, 2))},
             res.status(201).json(
                 {
                     "status": "ok",
@@ -120,7 +72,7 @@ app.get("/persons/:id", (req, res) => {
 });
 
 /**
- * API POST person
+ * POST person
  * example post request: {
     "TableName": "Personen",
         "Item": {
@@ -131,21 +83,48 @@ app.get("/persons/:id", (req, res) => {
         }
 }
  */
-app.post("/person", (req, res) => {
+app.post("/persons", (req, res) => {
     const params = req.body;
 
     console.log("req", params);
     console.log("Adding a new item...");
-    docClient.put(params, function (err, data) {
-        if (err) {
-            console.error("Unable to add item. Error:", JSON.stringify(err, null, 2));
-        } else {
-            console.log("Added item:", JSON.stringify(data, null, 2));
-            res.status(201).json({
-                "status": "ok",
-            });
-        }
-    });
+    docClient.put(params).promise()
+        .then((data)=>{
+                console.log("got person:", JSON.stringify(data, null, 2))},
+            res.status(201).json(
+                {
+                    "status": "ok",
+                }
+            )
+        )
+        .catch((err)=>{
+            console.error("Unable to post person. Error:", JSON.stringify(err, null, 2))
+        });
 });
+
+/**
+ * DELETE a person
+ */
+app.delete("/persons/:id", (req, res) => {
+
+    const params = {
+        Key: {Id: parseInt(req.params.id)},
+        TableName: "Personen",
+    };
+
+    docClient.delete(params).promise()
+        .then((data)=>{
+                console.log("deleted person:", JSON.stringify(data, null, 2))},
+            res.status(201).json(
+                {
+                    "status": "ok",
+                }
+            )
+        )
+        .catch((err)=>{
+            console.error("Unable to delete person. Error:", JSON.stringify(err, null, 2))
+        });
+});
+
 
 app.listen(4000, () => console.log("App listening on port 4000!"));
