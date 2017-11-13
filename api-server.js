@@ -79,7 +79,7 @@ app.get("/", (req, res) => res.send("Hello iDA!"));
  * API GET all persons
  */
 app.get("/persons", (req, res) => {
-    const params = {TableName : "Personen"};
+    const params = {TableName: "Personen"};
 
     console.log("req", params);
     console.log("Getting all items...");
@@ -102,21 +102,21 @@ app.get("/persons/:id", (req, res) => {
 
     const params = {
         Key: {Id: parseInt(req.params.id)},
-        TableName : "Personen",
+        TableName: "Personen",
     };
 
-    console.log("req", params);
-    console.log("Getting one item...");
-    docClient.get(params, function (err, data) {
-        if (err) {
-            console.error("Unable to get item. Error:", JSON.stringify(err, null, 2));
-        } else {
-            console.log("got item:", JSON.stringify(data, null, 2));
-            res.status(201).json({
-                "status": "ok",
-            });
-        }
-    });
+    docClient.get(params).promise()
+        .then((data)=>{
+            console.log("got item:", JSON.stringify(data, null, 2))},
+            res.status(201).json(
+                {
+                    "status": "ok",
+                }
+            )
+        )
+        .catch((err)=>{
+            console.error("Unable to get item. Error:", JSON.stringify(err, null, 2))
+        });
 });
 
 /**
