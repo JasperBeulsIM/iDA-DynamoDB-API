@@ -7,12 +7,8 @@ const bodyParser = require("body-parser");
 
 // DynamoDB config
 const AWS = require("aws-sdk");
-const credentials = new AWS.SharedIniFileCredentials({profile: 'default'});
-
-AWS.config.credentials = credentials;
 AWS.config.update({
     region: "eu-west-1",
-    endpoint: "https://dynamodb.eu-west-1.amazonaws.com" // zou ook nog uit env var moeten
 });
 
 const docClient = new AWS.DynamoDB.DocumentClient();
@@ -103,9 +99,9 @@ app.get("/persons", (req, res) => {
  * API GET a person
  */
 app.get("/persons/:id", (req, res) => {
-    const id = parseInt(req.params.id);
+
     const params = {
-        Key: {Item:{Id: id}},
+        Key: {Id: parseInt(req.params.id)},
         TableName : "Personen",
     };
 
