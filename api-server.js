@@ -5,7 +5,7 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
-// DynamoDB config
+// DynamoDB configdo
 const AWS = require("aws-sdk");
 AWS.config.update({
     region: "eu-west-1",
